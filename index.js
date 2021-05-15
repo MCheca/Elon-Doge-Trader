@@ -9,7 +9,7 @@ const binanceClient = Binance({
   apiSecret: process.env.BINANCE_API_SECRET,
 });
 
-var T = new Twit({
+const T = new Twit({
   consumer_key: process.env.TWIITER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token: process.env.TWITTER_ACCESS_TOKEN,
