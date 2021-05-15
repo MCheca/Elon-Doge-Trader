@@ -1,0 +1,19 @@
+{
+  "name": "elonbot",
+  "version": "1.0.0",
+  "description": "Bot that buys doge or shiba when Elon Musk tweets about them",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Marcos Checa",
+  "license": "ISC",
+  "dependencies": {
+    "binance-api-node": "^0.10.43",
+    "dotenv": "^9.0.2",
+    "node-cron": "^3.0.0",
+    "node-telegram-bot-api": "^0.53.0",
+    "twit": "^2.2.11"
+  }
+}
