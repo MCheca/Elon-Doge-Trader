@@ -23,8 +23,6 @@ const bot = new TelegramBot(Telegramtoken, {
 
 const ELON_TWITTER_ID = "44196397";
 
-const MINUTES_TO_SELL = 3;
-
 const PAIR_COIN = "USDT";
 
 const elonTracker = () => {
@@ -74,15 +72,20 @@ const createOrder = async (coinToBuy, pairCoin) => {
 
   if (buyOrder) {
     console.log(
-      `Bought ${buyOrder.symbol} at price ${buyOrder.fills[0].price} (${buyOrder.fills[0].qty} ${buyOrder.symbol}) - Commission = ${buyOrder.fills[0].commission} (${buyOrder.fills[0].commissionAsset})`
+      `Bought ${buyOrder.origQty} ${buyOrder.symbol} at price ${buyOrder.fills[0].price} (${buyOrder.fills[0].qty} ${buyOrder.symbol}) - Commission = ${buyOrder.fills[0].commission} (${buyOrder.fills[0].commissionAsset})`
     );
 
     bot.sendMessage(
       process.env.TELEGRAM_CHATID,
-      `Bought ${buyOrder.symbol} at price ${buyOrder.fills[0].price} (${buyOrder.fills[0].qty} ${buyOrder.symbol}) - Commission = ${buyOrder.fills[0].commission} (${buyOrder.fills[0].commissionAsset})`
+      `Bought ${buyOrder.origQty} ${buyOrder.symbol} at price ${buyOrder.fills[0].price} (${buyOrder.fills[0].qty} ${buyOrder.symbol}) - Commission = ${buyOrder.fills[0].commission} (${buyOrder.fills[0].commissionAsset})`
     );
 
-    setTimeout(await makeProfit, 60000 * MINUTES_TO_SELL, coinToBuy, pairCoin);
+    setTimeout(
+      await makeProfit,
+      60000 * process.env.MINUTES_TO_SELL,
+      coinToBuy,
+      pairCoin
+    );
   }
 };
 
@@ -109,12 +112,12 @@ const makeProfit = async (coinToSell, pairCoin) => {
 
   if (sellOrder) {
     console.log(
-      `Sold ${sellOrder.symbol} at price ${sellOrder.fills[0].price} (${sellOrder.fills[0].qty} ${sellOrder.symbol}) - Commission = ${sellOrder.fills[0].commission} (${sellOrder.fills[0].commissionAsset})`
+      `Sold ${sellOrder.origQty} ${sellOrder.symbol} at price ${sellOrder.fills[0].price} (${sellOrder.fills[0].qty} ${sellOrder.symbol}) - Commission = ${sellOrder.fills[0].commission} (${sellOrder.fills[0].commissionAsset})`
     );
 
     bot.sendMessage(
       process.env.TELEGRAM_CHATID,
-      `Sold ${sellOrder.symbol} at price ${sellOrder.fills[0].price} (${sellOrder.fills[0].qty} ${sellOrder.symbol}) - Commission = ${sellOrder.fills[0].commission} (${sellOrder.fills[0].commissionAsset})`
+      `Sold ${sellOrder.origQty} ${sellOrder.symbol} at price ${sellOrder.fills[0].price} (${sellOrder.fills[0].qty} ${sellOrder.symbol}) - Commission = ${sellOrder.fills[0].commission} (${sellOrder.fills[0].commissionAsset})`
     );
   }
 };
