@@ -40,4 +40,14 @@ Contributions are always welcome!
 
 - [@Mcheca](https://github.com/MCheca)
 
+## Disclaimer
+This bot not guarantees any profit, use it at your own risk.
+
+## Support the project
+DOGE: DSyvf6DCbCuZ9mpBgehgc1f9ZzPujyUYgD
+
+SHIBA: 0x461f7f78283ea685a704948c1f951666ec37ea05
+
+Binance referal link: https://www.binance.com/en/register?ref=16168835
+
   
