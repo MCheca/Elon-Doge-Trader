@@ -30,7 +30,7 @@ Create a new .env file based on env.default on the root folder and set up your c
   npm install
   npm start
 ```
-You can setup the minutes before sell the bought coin editing the MINUTES_TO_SELL constant in index.js, also can edit the paired coin to operate with the PAIR_COIN constant
+You can setup the minutes before sell the bought coin editing the MINUTES_TO_SELL enviroment variable, also can edit the paired coin to operate with the PAIR_COIN constant changing it in index.js
 
 ## Contributing
 
