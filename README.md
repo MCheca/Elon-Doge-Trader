@@ -19,7 +19,7 @@ And the it tells it to you via telegram:
   
 ## Tech Stack
 
-**Server:** Node, Express
+**Server:** NodeJS
 
   
 ## Installation 
@@ -30,7 +30,24 @@ Create a new .env file based on env.default on the root folder and set up your c
   npm install
   npm start
 ```
-You can setup the minutes before sell the bought coin editing the MINUTES_TO_SELL enviroment variable, also can edit the paired coin to operate with the PAIR_COIN constant changing it in index.js
+
+### Env variables
+
+   | Environment Key                | Description                                                               | Sample Value                                                                                        |
+   | ------------------------------ | ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+   | BINANCE_API_KEY           | Binance API key                                                  | (from [Binance](https://binance.zendesk.com/hc/en-us/articles/360002502072-How-to-create-API))      |
+   | BINANCE_API_SECRET        | Binance API secret                                               | (from [Binance](https://binance.zendesk.com/hc/en-us/articles/360002502072-How-to-create-API))      |
+   | TWIITER_CONSUMER_KEY           | Twitter consumer key                                                  | (from [Twitter Developers](http://developer.twitter.com/))                                 |
+   | TWITTER_CONSUMER_SECRET        | Twitter consumer secret                                               | (from [Twitter Developers](http://developer.twitter.com/))                                   |
+   | TWITTER_ACCESS_TOKEN          | Twitter access token                                                      | (from [Twitter Developers](http://developer.twitter.com/))                                                                                                 |
+   | TWITTER_ACCESS_SECRET      | Twitter access secret                                                        | (from [Twitter Developers](http://developer.twitter.com/))   |
+   | TELEGRAM_TOKEN          | Token of telegram bot                                                            | [Get token](https://core.telegram.org/bots)                                                                                          |
+   | TELEGRAM_CHATID         | Telegram chat ID                                                            | [Get chatId](https://telegram.me/get_id_bot)                                                                                               |
+   | MINUTES_TO_SELL   | Minutes to wait before sell the bought tokens | Default: 3                                                                                                |
+   | PAIR_COIN | Pair coin to trade with | Default: USDT                                                                                             |
+   | NOTIFY_ALL_TWEETS | Set true if want to get notified of all Elon Musk Tweets | Default: false |
+   | TRADE_ENABLED | Set if you want the bot to be able to trade | Default: true |
+
 
 ## Contributing
 
