@@ -12,9 +12,9 @@ Then the bot buys, in this case the bot buys in this position (blue arrow):
 
 ![App Screenshot](img/view1.jpg)
 
-And the it tells it to you via telegram:
+One more example:
 
-![App Screenshot](img/tlgrm1.jpg)
+![App Screenshot](img/tweet2.png)
 
   
 ## Tech Stack
