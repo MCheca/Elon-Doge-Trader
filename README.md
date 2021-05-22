@@ -47,6 +47,7 @@ Create a new .env file based on env.default on the root folder and set up your c
    | PAIR_COIN | Pair coin to trade with | Default: USDT                                                                                             |
    | NOTIFY_ALL_TWEETS | Set true if want to get notified of all Elon Musk Tweets | Default: false |
    | TRADE_ENABLED | Set if you want the bot to be able to trade | Default: true |
+   | ALLOW_REPLIES | Set true if you want to handle Elon replies | Default: false |
 
 
 ## Contributing
