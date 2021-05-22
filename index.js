@@ -24,6 +24,7 @@ const bot = new TelegramBot(Telegramtoken, {
 const ELON_TWITTER_ID = "44196397";
 
 const PAIR_COIN = process.env.PAIR_COIN || "USDT";
+const MINUTES_TO_SELL = process.env.MINUTES_TO_SELL || 3;
 const ALLOW_REPLIES = process.env.ALLOW_REPLIES || false;
 const NOTIFY_ALL_TWEETS = process.env.NOTIFY_ALL_TWEETS || false;
 const TRADE_ENABLED = process.env.TRADE_ENABLED || true;
@@ -103,7 +104,7 @@ const createOrder = async (coinToBuy, pairCoin) => {
 
     setTimeout(
       await makeProfit,
-      60000 * process.env.MINUTES_TO_SELL,
+      60000 * MINUTES_TO_SELL,
       coinToBuy,
       pairCoin,
       price
