@@ -23,10 +23,14 @@ const bot = new TelegramBot(Telegramtoken, {
 
 const ELON_TWITTER_ID = "44196397";
 
-const PAIR_COIN = "USDT";
+const PAIR_COIN = process.env.PAIR_COIN || "USDT";
+const ALLOW_REPLIES = process.env.ALLOW_REPLIES || false;
+const NOTIFY_ALL_TWEETS = process.env.NOTIFY_ALL_TWEETS || false;
+const TRADE_ENABLED = process.env.TRADE_ENABLED || true;
 
 const elonTracker = () => {
   console.log("Listening to new tweets of ELON to waste my money . . .");
+  sendTelegram("Listening to new tweets of ELON to waste my money . . .");
 
   const stream = T.stream("statuses/filter", {
     follow: ELON_TWITTER_ID,
@@ -34,14 +38,22 @@ const elonTracker = () => {
 
   stream.on("tweet", (tweet) => {
     if (tweet.user.id.toString() === ELON_TWITTER_ID) {
-      console.log("New tweet of ELON\n\n", tweet.text);
-      if (/.*doge.*/gi.test(tweet.text)) {
-        console.log("Let's buy DOGE");
-        createOrder("DOGE", PAIR_COIN);
+      const isReply = tweet.in_reply_to_status_id;
+
+      if ((!isReply || (isReply && ALLOW_REPLIES)) && TRADE_ENABLED) {
+        console.log("New tweet of ELON\n\n", tweet.text);
+
+        if (/.*doge.*/gi.test(tweet.text)) {
+          createOrder("DOGE", PAIR_COIN);
+        }
+
+        if (/.*shib.*/gi.test(tweet.text)) {
+          createOrder("SHIB", PAIR_COIN);
+        }
       }
-      if (/.*shib.*/gi.test(tweet.text)) {
-        console.log("Let's buy SHIBA");
-        createOrder("SHIB", PAIR_COIN);
+
+      if (NOTIFY_ALL_TWEETS) {
+        sendTelegram(`New Tweet of Elon Musk:\n\n${tweet.text}`);
       }
     }
   });
@@ -70,26 +82,36 @@ const createOrder = async (coinToBuy, pairCoin) => {
     recvWindow: 60000,
   });
 
-  if (buyOrder) {
-    console.log(
-      `Bought ${buyOrder.origQty} ${buyOrder.symbol} at price ${buyOrder.fills[0].price} (${buyOrder.fills[0].qty} ${buyOrder.symbol}) - Commission = ${buyOrder.fills[0].commission} (${buyOrder.fills[0].commissionAsset})`
-    );
+  if (buyOrder && buyOrder.fills) {
+    let price = 0,
+      quantity = 0,
+      commission = 0;
 
-    bot.sendMessage(
-      process.env.TELEGRAM_CHATID,
-      `Bought ${buyOrder.origQty} ${buyOrder.symbol} at price ${buyOrder.fills[0].price} (${buyOrder.fills[0].qty} ${buyOrder.symbol}) - Commission = ${buyOrder.fills[0].commission} (${buyOrder.fills[0].commissionAsset})`
-    );
+    for (let fill of buyOrder.fills) {
+      console.log(fill);
+      price = parseFloat(price) + parseFloat(fill.price);
+      quantity = parseFloat(quantity) + parseFloat(fill.qty);
+      commission = parseFloat(commission) + parseFloat(fill.commission);
+    }
+
+    price = price / buyOrder.fills.length;
+
+    const log = `Bought ${buyOrder.origQty} ${buyOrder.symbol} at price ${price} (${quantity} ${buyOrder.symbol}) - Commission = ${commission} (${buyOrder.fills[0].commissionAsset})`;
+
+    console.log(log);
+    sendTelegram(log);
 
     setTimeout(
       await makeProfit,
       60000 * process.env.MINUTES_TO_SELL,
       coinToBuy,
-      pairCoin
+      pairCoin,
+      price
     );
   }
 };
 
-const makeProfit = async (coinToSell, pairCoin) => {
+const makeProfit = async (coinToSell, pairCoin, buyPrice) => {
   let price = await binanceClient.prices({
     symbol: `${coinToSell}${pairCoin}`,
   });
@@ -110,16 +132,31 @@ const makeProfit = async (coinToSell, pairCoin) => {
     recvWindow: 60000,
   });
 
-  if (sellOrder) {
-    console.log(
-      `Sold ${sellOrder.origQty} ${sellOrder.symbol} at price ${sellOrder.fills[0].price} (${sellOrder.fills[0].qty} ${sellOrder.symbol}) - Commission = ${sellOrder.fills[0].commission} (${sellOrder.fills[0].commissionAsset})`
-    );
+  if (sellOrder && sellOrder.fills) {
+    let sellPrice = 0,
+      quantity = 0,
+      commission = 0;
 
-    bot.sendMessage(
-      process.env.TELEGRAM_CHATID,
-      `Sold ${sellOrder.origQty} ${sellOrder.symbol} at price ${sellOrder.fills[0].price} (${sellOrder.fills[0].qty} ${sellOrder.symbol}) - Commission = ${sellOrder.fills[0].commission} (${sellOrder.fills[0].commissionAsset})`
-    );
+    for (let fill of sellOrder.fills) {
+      sellPrice = parseFloat(sellPrice) + parseFloat(fill.price);
+      quantity = parseFloat(quantity) + parseFloat(fill.qty);
+      commission = parseFloat(commission) + parseFloat(fill.commission);
+    }
+
+    sellPrice = sellPrice / sellOrder.fills.length;
+
+    const profit = (((sellPrice - buyPrice) / buyPrice) * 100).toFixed(3);
+    const log = `Sold ${sellOrder.origQty} ${sellOrder.symbol} at price ${sellPrice} (${quantity} ${sellOrder.symbol}) - Commission = ${commission} (${sellOrder.fills[0].commissionAsset})`;
+
+    console.log(log);
+
+    sendTelegram(log);
+    sendTelegram(`Profit: ${profit}%`);
   }
+};
+
+const sendTelegram = async (text) => {
+  bot.sendMessage(process.env.TELEGRAM_CHATID, text);
 };
 
 elonTracker();
