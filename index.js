@@ -1,8 +1,8 @@
-const dotenv = require("dotenv").config();
+const dotenv = require('dotenv').config();
 
-const Binance = require("binance-api-node").default;
-const Twit = require("twit");
-const TelegramBot = require("node-telegram-bot-api");
+const Binance = require('binance-api-node').default;
+const Twit = require('twit');
+const TelegramBot = require('node-telegram-bot-api');
 
 const binanceClient = Binance({
   apiKey: process.env.BINANCE_API_KEY,
@@ -21,35 +21,36 @@ const bot = new TelegramBot(Telegramtoken, {
   polling: true,
 });
 
-const ELON_TWITTER_ID = "44196397";
+const ELON_TWITTER_ID = '44196397';
 
-const PAIR_COIN = process.env.PAIR_COIN || "USDT";
+const PAIR_COIN = process.env.PAIR_COIN || 'USDT';
 const MINUTES_TO_SELL = process.env.MINUTES_TO_SELL || 3;
 const ALLOW_REPLIES = process.env.ALLOW_REPLIES || false;
 const NOTIFY_ALL_TWEETS = process.env.NOTIFY_ALL_TWEETS || false;
 const TRADE_ENABLED = process.env.TRADE_ENABLED || true;
+const TRADE_PERCENTAGE = process.env.TRADE_PERCENTAGE || 100;
 
 const elonTracker = () => {
-  console.log("Listening to new tweets of ELON to waste my money . . .");
-  sendTelegram("Listening to new tweets of ELON to waste my money . . .");
+  console.log('Listening to new tweets of ELON to waste my money . . .');
+  sendTelegram('Listening to new tweets of ELON to waste my money . . .');
 
-  const stream = T.stream("statuses/filter", {
+  const stream = T.stream('statuses/filter', {
     follow: ELON_TWITTER_ID,
   });
 
-  stream.on("tweet", (tweet) => {
+  stream.on('tweet', (tweet) => {
     if (tweet.user.id.toString() === ELON_TWITTER_ID) {
       const isReply = tweet.in_reply_to_status_id;
 
       if ((!isReply || (isReply && ALLOW_REPLIES)) && TRADE_ENABLED) {
-        console.log("New tweet of ELON\n\n", tweet.text);
+        console.log('New tweet of ELON\n\n', tweet.text);
 
         if (/.*doge.*/gi.test(tweet.text)) {
-          createOrder("DOGE", PAIR_COIN);
+          createOrder('DOGE', PAIR_COIN);
         }
 
         if (/.*shib.*/gi.test(tweet.text)) {
-          createOrder("SHIB", PAIR_COIN);
+          createOrder('SHIB', PAIR_COIN);
         }
       }
 
@@ -71,15 +72,17 @@ const createOrder = async (coinToBuy, pairCoin) => {
     await binanceClient.accountInfo({ recvWindow: 60000 })
   ).balances.find((asset) => asset.asset === pairCoin).free;
 
+  freeBalance = (freeBalance * TRADE_PERCENTAGE) / 100;
+
   let buyAmount = freeBalance / price;
 
   buyAmount = parseInt(buyAmount);
 
   const buyOrder = await binanceClient.order({
     symbol: `${coinToBuy}${pairCoin}`,
-    side: "BUY",
+    side: 'BUY',
     quantity: buyAmount,
-    type: "MARKET",
+    type: 'MARKET',
     recvWindow: 60000,
   });
 
@@ -127,9 +130,9 @@ const makeProfit = async (coinToSell, pairCoin, buyPrice) => {
 
   const sellOrder = await binanceClient.order({
     symbol: `${coinToSell}${pairCoin}`,
-    side: "SELL",
+    side: 'SELL',
     quantity: sellAmount,
-    type: "MARKET",
+    type: 'MARKET',
     recvWindow: 60000,
   });
 
