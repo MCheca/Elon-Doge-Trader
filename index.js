@@ -72,7 +72,7 @@ const createOrder = async (coinToBuy, pairCoin) => {
     await binanceClient.accountInfo({ recvWindow: 60000 })
   ).balances.find((asset) => asset.asset === pairCoin).free;
 
-  freeBalance = (freeBalance * TRADE_PERCENTAGE) / 100;
+  freeBalance = freeBalance * (TRADE_PERCENTAGE / 100);
 
   let buyAmount = freeBalance / price;
 
