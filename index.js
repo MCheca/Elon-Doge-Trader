@@ -68,7 +68,7 @@ const createOrder = async (coinToBuy, pairCoin) => {
 
   price = price[`${coinToBuy}${pairCoin}`];
 
-  const freeBalance = await (
+  let freeBalance = await (
     await binanceClient.accountInfo({ recvWindow: 60000 })
   ).balances.find((asset) => asset.asset === pairCoin).free;
 
